@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Projeto01</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- <img src="cabeça.png"/> -->
+  <canvas id="canvas" width="1600" height="800">
+
+  </canvas>
+  <script src="utils.js"></script>
+  <script src="segment.js"></script>
+  <script src="slider.js"></script>
+  <script src="ball.js"></script>
+
+
+  <script>
+    window.onload = function () {
+
+      // Create Segments + constructor
+      var canvas = document.getElementById('canvas'),
+        context = canvas.getContext('2d'),
+
+        //segmentos:
+        principal= new Segment(20,  20, "#ffffff"), //Peça do movimento
+        cabeça  = new Segment( 85,  60, "#964B00"),
+        pescoço = new Segment(120,  80, "#964B00"),
+        corpo   = new Segment(200, 100, "#964B00"),  
+        perna1  = new Segment(100,  50, "#964B00"),
+        perna2  = new Segment(100,  50, "#964B00"),
+        perna3  = new Segment(80,   40, "#964B00"),
+        perna4  = new Segment(80,   40, "#964B00"),
+        canela1 = new Segment(110,  30, "#964B00"),
+        canela2 = new Segment(110,  30, "#964B00"),
+        canela3 = new Segment(120,  30, "#964B00"),
+        canela4 = new Segment(120,  30, "#964B00"),
+        ball1   = new Ball   (6, "#ffffff"),
+        ball2   = new Ball   (3, "#000000");
+
+        cycle = 0;
+        vx = 1;
+        vy= 1;
+
+        //Funções para o movimento das pernas:
+        function walk1(segA, segB, cyc) {
+          offset = 1;
+          var couxa = 30;
+          var couxabase = 115;
+          var perna = -45;
+          var pernabase = -40;
+          var angle0 = (Math.sin(cyc) * couxa + couxabase) * Math.PI / 180,
+            angle1 = (Math.sin(cyc) * perna + pernabase) * Math.PI / 180;
+
+          //Rotação:
+          segA.rotation = angle0;
+          segB.rotation = segA.rotation + angle1;
+
+          //ligação:
+          segB.x = segA.getPin().x;
+          segB.y = segA.getPin().y;
+        }
+
+        function walk2(segA, segB, cyc) {
+          offset = 1;
+          var couxa = 30;
+          var couxabase = 25;
+          var perna = -45;
+          var pernabase = -40;
+          var angle0 = (Math.sin(cyc) * couxa + couxabase) * Math.PI / 180,
+            angle1 = (Math.sin(cyc) * perna + pernabase) * Math.PI / 180;
+
+          //Rotação:
+          segA.rotation = angle0 + 90 * Math.PI / 180;
+          segB.rotation = segA.rotation + angle1;
+
+          //ligação:
+          segB.x = segA.getPin().x;
+          segB.y = segA.getPin().y;
+        }
+
+        function walk3(segA, segB, cyc) {
+          offset = 1;
+          var couxa = 30;
+          var couxabase = -30;
+          var perna = -45;
+          var pernabase = 50;
+          var angle0 = (Math.sin(cyc) * couxa + couxabase) * Math.PI / 180,
+            angle1 = (Math.sin(cyc) * perna + pernabase) * Math.PI / 180;
+
+          //Rotação:
+          segA.rotation = angle0 + 90 * Math.PI / 180;
+          segB.rotation = segA.rotation + angle1;
+
+          //ligação:
+          segB.x = segA.getPin().x;
+          segB.y = segA.getPin().y;
+        }
+
+        function walk4(segA, segB, cyc) {
+        offset = 1;
+        var couxa = 20;
+        var couxabase = -30;
+        var perna = -45;
+        var pernabase = 50;
+        var angle0 = (Math.sin(cyc) * couxa + couxabase) * Math.PI / 180,
+          angle1 = (Math.sin(cyc) * perna + pernabase) * Math.PI / 180;
+
+        //Rotação:
+        segA.rotation = angle0 + 90 * Math.PI / 180;
+        segB.rotation = segA.rotation + angle1;
+
+        //ligação:
+        segB.x = segA.getPin().x;
+        segB.y = segA.getPin().y;
+      }
+
+
+        //Movimento do cabeça/pescoço:
+        function movimento(segA, segB, cyc) {
+          offset = 1;
+          var cabeça1 = 5; //de x a x
+          var cabeçabase1 = -45; //angulo
+          var pescoço1 = 5;
+          var pescoçobase1 = 90;
+          var angle0 = (Math.sin(cyc) * cabeça1 + cabeçabase1) * Math.PI / 180,
+            angle1 = (Math.sin(cyc) * pescoço1 + pescoçobase1) * Math.PI / 180;
+
+          //Rotação:
+          segA.rotation = angle0;
+          segB.rotation = segA.rotation + angle1;
+
+          //ligação:
+          segB.x = segA.getPin().x;
+          segB.y = segA.getPin().y;
+        }
+
+        //Movimento do tronco:
+        function movimento2(segA, segB, cyc) {
+          offset = 1;
+          var cabeça1 = 0; //de x a x
+          var cabeçabase1 = -45; //angulo
+          var pescoço1 = 1;
+          var pescoçobase1 = 45;
+          var angle0 = (Math.sin(cyc) * cabeça1 + cabeçabase1) * Math.PI / 180,
+            angle1 = (Math.sin(cyc) * pescoço1 + pescoçobase1) * Math.PI / 180;
+
+          //Rotação:
+          segA.rotation = angle0;
+          segB.rotation = segA.rotation + angle1;
+
+          //ligação:
+          segB.x = segA.getPin().x;
+          segB.y = segA.getPin().y;
+        }
+
+
+
+        function drawFrame() {
+          window.requestAnimationFrame(drawFrame, canvas);
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          //Ciclo para movimento das pernas:
+          cycle += 0.1;
+          walk1(perna1, canela1, cycle + Math.PI);
+          walk2(perna2, canela2, cycle);
+          walk3(perna3, canela3, cycle + Math.PI);
+          walk4(perna4, canela4, cycle);
+
+          //Ciclo para momentos do tronco:
+          movimento(pescoço, cabeça, cycle);
+          movimento2(corpo, corpo, cycle);
+
+          //Peça do movimento:
+          principal.x += vx;
+          principal.y = 550;
+
+          //TRONCO:
+          corpo.x  = principal.getPin().x;
+          corpo.y  = principal.getPin().y;
+          pescoço.x = corpo.getPin().x;
+          pescoço.y = corpo.getPin().y;
+          cabeça.x  = pescoço.getPin().x;
+          cabeça.y  = pescoço.getPin().y;
+          ball1.x   = pescoço.getPin().x;
+          ball1.y   = pescoço.getPin().y ;
+          ball2.x   = pescoço.getPin().x ;
+          ball2.y   = pescoço.getPin().y ;
+          
+          //PERNAS TRÁS:
+          perna1.x  = corpo.getPin().x - 200;
+          perna1.y  = corpo.getPin().y + 10;
+          canela1.x = perna1.getPin().x;
+          canela1.y = perna1.getPin().y;
+          perna2.x  = corpo.getPin().x - 200;
+          perna2.y  = corpo.getPin().y + 10;
+          canela2.x = perna2.getPin().x;
+          canela2.y = perna2.getPin().y;
+
+          //PERNA FRENTE:
+          perna3.x  = corpo.getPin().x;
+          perna3.y  = corpo.getPin().y + 30;
+          canela3.x = perna3.getPin().x;
+          canela3.y = perna3.getPin().y;
+          perna4.x  = corpo.getPin().x;
+          perna4.y  = corpo.getPin().y + 30;
+          canela4.x = perna4.getPin().x;
+          canela4.y = perna4.getPin().y;
+
+
+          
+          //Draws:
+          principal.draw(context);
+          perna1.draw(context);
+          canela1.draw(context);
+          perna3.draw(context);
+          canela3.draw(context);
+          pescoço.draw(context);
+          corpo.draw(context);
+          cabeça.draw(context);    
+          perna2.draw(context);
+          canela2.draw(context);
+          perna4.draw(context);
+          canela4.draw(context);
+
+          ball1.draw(context);
+          ball2.draw(context);
+
+        }
+
+      drawFrame(); //chamar função
+
+
+    };
+  </script>
+</body>
+
+</html>
